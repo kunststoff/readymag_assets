@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  <title>p5.js Dropbox Image</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: transparent; /* Set body background to transparent */
+    }
+    canvas {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    let img;
+    let aspectRatio = 3 / 2; // Aspect ratio of 3:2
+
+    function preload() {
+        // Replace with your adjusted Dropbox link
+        img = loadImage('https://dl.dropbox.com/scl/fi/8aljqy09hbmk8gnxchst4/dog.png?rlkey=i8pnrqlkwva5e9lu92g3s5kol&st=zwp082oc&dl=0'); 
+    }
+
+    function setup() {
+      let canvasWidth = windowWidth;
+      let canvasHeight = windowWidth / aspectRatio;
+
+      if (canvasHeight > windowHeight) {
+          canvasHeight = windowHeight;
+          canvasWidth = canvasHeight * aspectRatio;
+      }
+
+      // Create a transparent canvas
+      createCanvas(canvasWidth, canvasHeight);
+      imageMode(CORNER);
+      frameRate(30);
+
+      // Set the canvas background to transparent
+      clear();
+    }
+
+    function draw() {
+      clear(); // Clear the canvas each frame to keep the background transparent
+
+      let stripHeight = img.height / 128;
+      let scaleFactor = width / img.width;
+
+      for (let i = 0; i < 128; i += 2) {
+          let glitchYOffset = random(-10, 10);
+          let glitchXOffset = random(-10, 10);
+
+          image(img, glitchXOffset * scaleFactor, (stripHeight * i + glitchYOffset) * scaleFactor, img.width * scaleFactor, stripHeight * scaleFactor, 0, stripHeight * i, img.width, stripHeight);
+
+          if (i + 1 < 128) {
+              glitchYOffset = random(-10, 10);
+              glitchXOffset = random(-10, 10);
+
+              image(img, glitchXOffset * scaleFactor, (stripHeight * (i + 1) + glitchYOffset) * scaleFactor, img.width * scaleFactor, stripHeight * scaleFactor, 0, stripHeight * (i + 1), img.width, stripHeight);
+          }
+      }
+    }
+
+    function windowResized() {
+      let canvasWidth = windowWidth;
+      let canvasHeight = windowWidth / aspectRatio;
+
+      if (canvasHeight > windowHeight) {
+          canvasHeight = windowHeight;
+          canvasWidth = canvasHeight * aspectRatio;
+      }
+
+      resizeCanvas(canvasWidth, canvasHeight);
+      clear(); // Ensure the resized canvas is also transparent
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  <title>Responsive p5.js Canvas for Readymag</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: transparent;
+    }
+    
+    #p5-canvas {
+      display: block;
+      position: relative;
+      top: 0;
+      left: 0;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="canvas-container"></div>
+
+  <script>
+    let img;
+    let aspectRatio = 3 / 2; // 3:2 Aspect Ratio
+    let canvas;
+
+    function preload() {
+      // Sicherstellen, dass das Bild CORS-freundlich geladen wird
+      img = loadImage('https://via.placeholder.com/800x600.png'); // Ersatz für Dropbox-Link
+    }
+
+    function setup() {
+      // Dynamische Größe, abhängig von der Größe des Containers
+      let container = document.getElementById('canvas-container');
+      let canvasWidth = container.offsetWidth;
+      let canvasHeight = canvasWidth / aspectRatio;
+
+      // Canvas erstellen
+      canvas = createCanvas(canvasWidth, canvasHeight);
+      canvas.parent('canvas-container');
+      imageMode(CORNER);
+      frameRate(30);
+      clear();
+    }
+
+    function draw() {
+      clear(); // Transparenz erhalten
+
+      // Skaliere das Bild in Streifen
+      let stripHeight = img.height / 128;
+      let scaleFactor = width / img.width;
+
+      for (let i = 0; i < 128; i += 2) {
+        let glitchYOffset = random(-10, 10);
+        let glitchXOffset = random(-10, 10);
+
+        image(img, glitchXOffset * scaleFactor, (stripHeight * i + glitchYOffset) * scaleFactor, img.width * scaleFactor, stripHeight * scaleFactor, 0, stripHeight * i, img.width, stripHeight);
+
+        if (i + 1 < 128) {
+          glitchYOffset = random(-10, 10);
+          glitchXOffset = random(-10, 10);
+
+          image(img, glitchXOffset * scaleFactor, (stripHeight * (i + 1) + glitchYOffset) * scaleFactor, img.width * scaleFactor, stripHeight * scaleFactor, 0, stripHeight * (i + 1), img.width, stripHeight);
+        }
+      }
+    }
+
+    function windowResized() {
+      let container = document.getElementById('canvas-container');
+      let canvasWidth = container.offsetWidth;
+      let canvasHeight = canvasWidth / aspectRatio;
+
+      resizeCanvas(canvasWidth, canvasHeight);
+      clear();
+    }
+
+    // Funktioniert nahtlos innerhalb eines iframes und Readymag
+    window.addEventListener('resize', windowResized);
+
+  </script>
+</body>
+</html>
